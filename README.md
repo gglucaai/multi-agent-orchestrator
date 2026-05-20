@@ -1,5 +1,9 @@
 # AI Startup Studio
 
+
+https://github.com/user-attachments/assets/1df70d5d-7081-4d02-a27a-85d78c729ab4
+
+
 A multi-agent orchestration demo that turns a one-line problem statement into a full startup concept report. A central **orchestrator** coordinates six specialized AI agents, and the whole process is streamed live to a React interface where you can watch the agents work, talk to the orchestrator, and revise their output in real time.
 
 The project implements the **orchestrator–workers pattern**: rather than a fixed chain of prompts, a coordinating agent dispatches work to specialists, evaluates what comes back, and (in the Hugging Face version) sends it back for revision if it isn't good enough.
