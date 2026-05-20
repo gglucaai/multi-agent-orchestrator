@@ -1,0 +1,310 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'VT323', monospace;
+  --bg-dark: #0a0e27;
+  --bg-darker: #050816;
+  --orchestrator-color: #6366f1;
+  --connection-color: #6366f1;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+  min-height: 100vh;
+  color: white;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Pixel art rendering for character images */
+.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', monospace;
+}
+
+.font-retro {
+  font-family: 'VT323', monospace;
+  font-size: 1.2em;
+}
+
+/* Animated grid background */
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-move 20s linear infinite;
+}
+
+@keyframes grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 50px 50px; }
+}
+
+/* Glowing data packet animation */
+@keyframes data-flow {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.data-packet {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd700 0%, #ff6b35 100%);
+  box-shadow: 0 0 20px #ffd700, 0 0 40px #ff6b35;
+  animation: data-flow 1.5s ease-in-out;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Connection line endpoints animate smoothly when an agent moves */
+.connection-line-static,
+.connection-line-active {
+  transition: x2 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+              y2 0.7s cubic-bezier(0.34, 1.56, 0.64, 1),
+              stroke-width 0.3s ease-out,
+              opacity 0.3s ease-out;
+}
+
+/* Connection line pulse */
+@keyframes line-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.connection-line-active {
+  animation: line-pulse 1.2s ease-in-out infinite;
+}
+
+/* Active agent glow */
+.agent-active {
+  animation: agent-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes agent-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  50% {
+    filter: drop-shadow(0 0 25px currentColor);
+  }
+}
+
+/* Idle bob — keeps inactive agents feeling alive */
+.agent-idle {
+  animation: agent-idle-bob 3.2s ease-in-out infinite;
+}
+
+@keyframes agent-idle-bob {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-6px) rotate(1deg); }
+}
+
+/* Bump animation — agent lurches toward orchestrator and recoils.
+   --bump-x / --bump-y point inward (toward center). */
+.agent-bump {
+  animation: agent-bump 0.5s cubic-bezier(0.36, 0, 0.66, -0.56) both;
+}
+
+@keyframes agent-bump {
+  0% {
+    transform: translate(0, 0) scale(1);
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  35% {
+    transform: translate(var(--bump-x), var(--bump-y)) scale(1.18);
+    filter: drop-shadow(0 0 30px currentColor) brightness(1.4);
+  }
+  60% {
+    transform: translate(calc(var(--bump-x) * -0.4), calc(var(--bump-y) * -0.4)) scale(0.94);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+}
+
+/* Completed agent state */
+.agent-complete {
+  filter: drop-shadow(0 0 8px #10b981);
+}
+
+/* Pending agent state */
+.agent-pending {
+  opacity: 0.55;
+  filter: grayscale(40%);
+}
+
+/* Orchestrator special styling */
+.orchestrator-active {
+  animation: orchestrator-pulse 2s ease-in-out infinite;
+}
+
+@keyframes orchestrator-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px #6366f1) drop-shadow(0 0 40px #818cf8);
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px #6366f1) drop-shadow(0 0 60px #818cf8);
+    transform: scale(1.05);
+  }
+}
+
+/* Orchestrator recoil on impact */
+.orchestrator-bump {
+  animation: orchestrator-bump 0.45s cubic-bezier(0.36, 0, 0.66, -0.56) both;
+}
+
+@keyframes orchestrator-bump {
+  0%   { transform: scale(1) rotate(0deg); }
+  30%  { transform: scale(1.12) rotate(-2deg); filter: drop-shadow(0 0 35px #fbbf24); }
+  55%  { transform: scale(0.96) rotate(2deg); }
+  80%  { transform: scale(1.03) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* Expanding shockwave ring inside orchestrator on each bump */
+.orchestrator-shockwave {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  border: 3px solid #fbbf24;
+  pointer-events: none;
+  animation: shockwave 0.6s ease-out forwards;
+}
+
+@keyframes shockwave {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+    border-width: 3px;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+/* Spark burst at the impact point */
+.spark-burst {
+  position: relative;
+  width: 1px;
+  height: 1px;
+}
+
+.spark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  margin-top: -4px;
+  background: radial-gradient(circle, #fef3c7 0%, #fbbf24 50%, #f97316 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fbbf24, 0 0 16px #f59e0b;
+  transform-origin: center;
+  animation: spark-fly 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--spark-delay, 0ms);
+}
+
+@keyframes spark-fly {
+  0% {
+    transform: rotate(var(--spark-angle)) translateX(0) scale(1);
+    opacity: 1;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--spark-angle)) translateX(60px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Bright central flash */
+.spark-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  margin-top: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fffbeb 0%, #fbbf24 40%, transparent 70%);
+  animation: spark-flash 0.45s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes spark-flash {
+  0%   { transform: scale(0.4); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Scanline effect for retro feel */
+.scanlines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 0, 0, 0.05) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0e27;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 6px;
+}
+
+/* Status badge animations */
+.status-running {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
